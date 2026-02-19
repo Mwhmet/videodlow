@@ -26,12 +26,15 @@ def do_download(task_id, url, fmt, quality):
 
         filename = os.path.join(DOWNLOAD_FOLDER, f"{task_id}")
 
+        cookies = 'cookies.txt' if os.path.exists('cookies.txt') else None
+
         if fmt == "mp3":
             ydl_opts = {
                 'format': 'bestaudio/best',
                 'outtmpl': filename + '.%(ext)s',
                 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': quality.replace('kbps', '')}],
                 'progress_hooks': [progress_hook],
+                'cookiefile': cookies,
             }
         elif fmt == "jpg":
             ydl_opts = {
@@ -40,6 +43,7 @@ def do_download(task_id, url, fmt, quality):
                 'writethumbnail': True,
                 'skip_download': True,
                 'progress_hooks': [progress_hook],
+                'cookiefile': cookies,
             }
         else:
             quality_map = {'2160p': 'bestvideo[height<=2160]+bestaudio/best', '1080p': 'bestvideo[height<=1080]+bestaudio/best', '720p': 'bestvideo[height<=720]+bestaudio/best', '480p': 'bestvideo[height<=480]+bestaudio/best', '360p': 'bestvideo[height<=360]+bestaudio/best'}
@@ -48,6 +52,7 @@ def do_download(task_id, url, fmt, quality):
                 'outtmpl': filename + '.%(ext)s',
                 'merge_output_format': 'mp4',
                 'progress_hooks': [progress_hook],
+                'cookiefile': cookies,
             }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
